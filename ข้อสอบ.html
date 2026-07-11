@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบข้อสอบออนไลน์: Arduino & อิเล็กทรอนิกส์เบื้องต้น ม.2</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Prompt', 'Sarabun', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth state transitions */
+        .page-fade {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar for beautiful dashboard lists */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-indigo-800 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white text-indigo-700 p-2.5 rounded-lg shadow-inner flex items-center justify-center">
+                    <i class="fa-solid fa-microchip text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide">วิชาเทคโนโลยี (Arduino & อิเล็กทรอนิกส์เบื้องต้น)</h1>
+                    <p class="text-xs text-indigo-200">แบบทดสอบกลางภาค - ระดับชั้นมัธยมศึกษาปีที่ 2</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="switchScreen('home')" class="bg-white/10 hover:bg-white/20 transition px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> หน้าแรก
+                </button>
+                <button onclick="openAdminModal()" class="bg-yellow-500 hover:bg-yellow-600 text-slate-950 transition px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-user-tie"></i> แดชบอร์ดคุณครู
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+        
+        <!-- ==================== SCREEN 1: HOME PAGE ==================== -->
+        <section id="screen-home" class="page-fade space-y-8 py-4">
+            <!-- Hero Banner -->
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-0 border border-slate-100">
+                <div class="p-8 md:p-12 md:col-span-7 flex flex-col justify-center space-y-6">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 self-start">
+                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span> ประเมินผลปลายภาคเรียน
+                    </span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">
+                        ระบบทำข้อสอบและรายงานผลสอบ <span class="text-indigo-600">วิชาเทคโนโลยี ม.2</span>
+                    </h2>
+                    <p class="text-slate-600 text-lg leading-relaxed">
+                        แบบทดสอบวัดความรู้ระดับชั้น ม.2 คะแนนเต็ม 20 คะแนน เวลา 30 นาที ครอบคลุมเรื่องระบบดิจิทัล/อนาล็อก อุปกรณ์รับเข้าและแสดงผล โค้ดพื้นฐาน และระบบวงจรไฟฟ้า
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <div class="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 px-4 py-2.5 rounded-xl">
+                            <i class="fa-solid fa-list-check text-indigo-600"></i>
+                            <span>ข้อสอบ 20 ข้อ (สี่ตัวเลือก)</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-500 bg-slate-50 px-4 py-2.5 rounded-xl">
+                            <i class="fa-solid fa-clock text-indigo-600"></i>
+                            <span>เวลาทำสอบ 30 นาที</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:col-span-5 bg-gradient-to-br from-indigo-50 via-blue-50 to-indigo-100 p-8 flex items-center justify-center border-t md:border-t-0 md:border-l border-slate-100">
+                    <img src="https://images.unsplash.com/photo-1553481187-be93c21490a9?q=80&w=600&auto=format&fit=crop" alt="Arduino Concept" class="rounded-2xl shadow-lg border-4 border-white max-w-full h-48 md:h-64 object-cover">
+                </div>
+            </div>
+
+            <!-- Action Panels: Registration and Lookup -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Registration to Take Quiz (Left Panel) -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-slate-100 lg:col-span-7 space-y-6">
+                    <div class="border-b border-slate-100 pb-4">
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-user-pen text-indigo-600"></i> ข้อมูลผู้เข้าทดสอบ
+                        </h3>
+                        <p class="text-sm text-slate-500">กรุณากรอกข้อมูลส่วนบุคคลที่ถูกต้องเพื่อบันทึกผลสอบเข้าสู่ระบบแยกห้องเรียน</p>
+                    </div>
+
+                    <form id="form-register" onsubmit="startQuiz(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Room -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">ห้องเรียน *</label>
+                                <select id="reg-room" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition outline-none bg-white">
+                                    <option value="" disabled selected>เลือกห้องเรียน...</option>
+                                    <option value="ม.2/1">มัธยมศึกษาปีที่ 2/1</option>
+                                    <option value="ม.2/2">มัธยมศึกษาปีที่ 2/2</option>
+                                    <option value="ม.2/3">มัธยมศึกษาปีที่ 2/3</option>
+                                </select>
+                            </div>
+                            <!-- Student ID / User ID -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">User ID (รหัสผู้ใช้งานสำหรับดูคะแนน) *</label>
+                                <input type="text" id="reg-uid" required placeholder="ตัวอย่าง: UID82101" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                            <!-- No -->
+                            <div class="sm:col-span-1">
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">เลขที่ *</label>
+                                <input type="number" id="reg-no" required min="1" max="60" placeholder="เลขที่" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition outline-none">
+                            </div>
+                            <!-- Full name -->
+                            <div class="sm:col-span-3">
+                                <label class="block text-sm font-medium text-slate-700 mb-1.5">ชื่อ - นามสกุล *</label>
+                                <input type="text" id="reg-name" required placeholder="เด็กหญิง/เด็กชาย ใส่ใจ การเรียน" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition outline-none">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 text-lg">
+                            <i class="fa-solid fa-play-circle"></i> เริ่มทำข้อสอบของท่าน
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Score Lookup Section (Right Panel) -->
+                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl shadow-lg p-6 md:p-8 lg:col-span-5 flex flex-col justify-between space-y-6">
+                    <div>
+                        <h3 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass text-indigo-300"></i> ตรวจสอบผลสอบรายบุคคล
+                        </h3>
+                        <p class="text-indigo-200 text-sm mt-1">ใส่อีเมล์หรือ User ID ของท่านเพื่อค้นหาผลคะแนนเฉลี่ยที่สอบไปแล้ว</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-indigo-300 uppercase tracking-wider mb-1.5">ป้อน User ID ของท่าน</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                    <i class="fa-solid fa-key"></i>
+                                </span>
+                                <input type="text" id="lookup-uid" placeholder="เช่น UID82101" class="w-full bg-white/10 border border-white/20 focus:bg-white/15 focus:border-indigo-400 transition rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-400 outline-none">
+                            </div>
+                        </div>
+                        <button onclick="lookupUserScore()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-bold py-3.5 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                            ค้นหาผลคะแนนสอบ <i class="fa-solid fa-circle-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Result output area (hidden initially) -->
+                    <div id="lookup-result-box" class="hidden bg-white/10 p-4 rounded-xl border border-white/10 space-y-2 text-sm">
+                        <div class="flex justify-between border-b border-white/10 pb-1.5">
+                            <span class="text-indigo-300">ชื่อนักเรียน:</span>
+                            <span id="lookup-name" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-1.5">
+                            <span class="text-indigo-300">ห้อง / เลขที่:</span>
+                            <span>ม.<span id="lookup-room"></span> / <span id="lookup-no"></span></span>
+                        </div>
+                        <div class="flex justify-between items-center pt-1.5">
+                            <span class="text-indigo-300">คะแนนที่ได้:</span>
+                            <div class="flex items-center gap-2">
+                                <span id="lookup-score" class="font-bold text-lg text-emerald-400">0/20</span>
+                                <span id="lookup-badge" class="px-2 py-0.5 rounded text-xs font-bold">ผ่าน</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 2: ACTIVE QUIZ ==================== -->
+        <section id="screen-quiz" class="hidden page-fade space-y-6">
+            <!-- Fixed Info Bar & Timer -->
+            <div class="bg-white rounded-2xl shadow-md p-4 flex flex-col md:flex-row justify-between items-center gap-4 border border-slate-100">
+                <div class="flex flex-wrap items-center gap-4 text-sm">
+                    <div class="bg-indigo-50 text-indigo-700 px-3.5 py-1.5 rounded-xl font-bold">
+                        <i class="fa-solid fa-user"></i> <span id="quiz-student-info">ม.2/1 เลขที่ 1 เด็กหญิงสิรินธร</span>
+                    </div>
+                    <div class="bg-indigo-50 text-indigo-700 px-3.5 py-1.5 rounded-xl font-bold">
+                        User ID: <span id="quiz-student-uid" class="font-mono">UID82101</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1.5 text-rose-600 font-bold text-lg bg-rose-50 px-4 py-2 rounded-xl animate-pulse">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                        <span id="quiz-timer">30:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Layout: Navigation (Sidebar) + Question Container -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Question Navigation Sidebar -->
+                <div class="lg:col-span-3 bg-white rounded-2xl p-4 shadow-md border border-slate-100 space-y-4">
+                    <h4 class="font-bold text-slate-800 text-sm border-b border-slate-100 pb-2">แผนผังคำถาม (20 ข้อ)</h4>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">ตอนที่ 1: Digital/Analog</span>
+                            <div class="grid grid-cols-5 gap-1.5">
+                                <button onclick="jumpToQuestion(1)" id="nav-btn-1" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">1</button>
+                                <button onclick="jumpToQuestion(2)" id="nav-btn-2" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">2</button>
+                                <button onclick="jumpToQuestion(3)" id="nav-btn-3" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">3</button>
+                                <button onclick="jumpToQuestion(4)" id="nav-btn-4" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">4</button>
+                                <button onclick="jumpToQuestion(5)" id="nav-btn-5" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">5</button>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">ตอนที่ 2: Input/Output</span>
+                            <div class="grid grid-cols-5 gap-1.5">
+                                <button onclick="jumpToQuestion(6)" id="nav-btn-6" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">6</button>
+                                <button onclick="jumpToQuestion(7)" id="nav-btn-7" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">7</button>
+                                <button onclick="jumpToQuestion(8)" id="nav-btn-8" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">8</button>
+                                <button onclick="jumpToQuestion(9)" id="nav-btn-9" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">9</button>
+                                <button onclick="jumpToQuestion(10)" id="nav-btn-10" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">10</button>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">ตอนที่ 3: Arduino Basic</span>
+                            <div class="grid grid-cols-5 gap-1.5">
+                                <button onclick="jumpToQuestion(11)" id="nav-btn-11" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">11</button>
+                                <button onclick="jumpToQuestion(12)" id="nav-btn-12" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">12</button>
+                                <button onclick="jumpToQuestion(13)" id="nav-btn-13" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">13</button>
+                                <button onclick="jumpToQuestion(14)" id="nav-btn-14" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">14</button>
+                                <button onclick="jumpToQuestion(15)" id="nav-btn-15" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">15</button>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">ตอนที่ 4: AC/DC Power</span>
+                            <div class="grid grid-cols-5 gap-1.5">
+                                <button onclick="jumpToQuestion(16)" id="nav-btn-16" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">16</button>
+                                <button onclick="jumpToQuestion(17)" id="nav-btn-17" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">17</button>
+                                <button onclick="jumpToQuestion(18)" id="nav-btn-18" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">18</button>
+                                <button onclick="jumpToQuestion(19)" id="nav-btn-19" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">19</button>
+                                <button onclick="jumpToQuestion(20)" id="nav-btn-20" class="h-9 rounded-lg font-semibold text-sm transition border flex items-center justify-center bg-slate-100 border-slate-200">20</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button onclick="confirmSubmitQuiz()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl transition shadow flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> ส่งคำตอบตรวจผลสอบ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Question Details -->
+                <div class="lg:col-span-9 space-y-6">
+                    <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 border border-slate-100">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+                            <div>
+                                <span id="quiz-part-name" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full uppercase tracking-wider">ตอนที่ 1: Digital และ Analog</span>
+                                <h3 id="quiz-q-num" class="text-xl font-bold text-slate-800 mt-1.5">คำถามข้อที่ 1</h3>
+                            </div>
+                            <span class="text-xs font-bold text-slate-400">ข้อละ 1 คะแนน</span>
+                        </div>
+
+                        <!-- Question Text / Code Box -->
+                        <div class="space-y-6">
+                            <p id="quiz-q-text" class="text-lg text-slate-900 font-semibold leading-relaxed">ข้อมูลแบบ Digital มีลักษณะอย่างไร</p>
+                            
+                            <!-- Embedded Code Snippet / Context Box (Conditionally updated via JS) -->
+                            <div id="quiz-code-box" class="hidden bg-slate-900 text-slate-100 p-4 rounded-xl font-mono text-sm shadow-inner relative overflow-x-auto">
+                                <div class="absolute right-3 top-3 bg-white/10 text-xs text-white/50 px-2 py-0.5 rounded uppercase">Arduino Code</div>
+                                <pre id="quiz-code-content" class="whitespace-pre">pinMode(13, OUTPUT);</pre>
+                            </div>
+
+                            <!-- Options Grid -->
+                            <div id="quiz-options" class="grid grid-cols-1 gap-3.5">
+                                <!-- Generated Dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Action Buttons -->
+                    <div class="flex justify-between items-center gap-4">
+                        <button onclick="prevQuestion()" id="btn-prev-q" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold px-6 py-3.5 rounded-xl transition shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+                        </button>
+                        <button onclick="nextQuestion()" id="btn-next-q" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3.5 rounded-xl transition shadow flex items-center gap-2 ml-auto">
+                            ข้อถัดไป <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 3: RESULTS SUMMARY ==================== -->
+        <section id="screen-result" class="hidden page-fade space-y-8">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 text-center p-8 md:p-12 space-y-6">
+                <!-- Visual score indicator -->
+                <div class="mx-auto w-36 h-36 md:w-44 md:h-44 rounded-full border-8 flex flex-col items-center justify-center shadow-lg" id="score-ring-color">
+                    <span id="result-total-score" class="text-4xl md:text-5xl font-black text-slate-800">18</span>
+                    <span class="text-slate-400 font-bold border-t border-slate-200 pt-0.5 mt-1 text-xs md:text-sm uppercase tracking-widest">เต็ม 20 คะแนน</span>
+                </div>
+
+                <div class="max-w-xl mx-auto space-y-3">
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">
+                        ยินดีด้วย! ท่านทำแบบทดสอบเสร็จเรียบร้อยแล้ว
+                    </h2>
+                    <p id="result-user-summary" class="text-slate-600">
+                        ผลการทดสอบของ ม.2/1 เลขที่ 1 เด็กหญิงสิรินธร (UID82101) ได้รับการบันทึกเข้าห้องเรียนเรียบร้อยแล้ว
+                    </p>
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold" id="result-pass-badge">
+                        <i class="fa-solid fa-circle-check"></i> ผ่านเกณฑ์การทดสอบ
+                    </div>
+                </div>
+
+                <!-- breakdown scores -->
+                <div class="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 block mb-1">ตอนที่ 1: Digital/Analog</span>
+                        <span id="result-p1-score" class="text-xl font-bold text-slate-900">5/5</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 block mb-1">ตอนที่ 2: Input/Output</span>
+                        <span id="result-p2-score" class="text-xl font-bold text-slate-900">4/5</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 block mb-1">ตอนที่ 3: Arduino Code</span>
+                        <span id="result-p3-score" class="text-xl font-bold text-slate-900">4/5</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span class="text-xs text-slate-500 block mb-1">ตอนที่ 4: AC/DC Power</span>
+                        <span id="result-p4-score" class="text-xl font-bold text-slate-900">5/5</span>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button onclick="backToHome()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3.5 rounded-xl transition shadow-lg">
+                        กลับสู่หน้าหลักระบบ
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 4: TEACHER DASHBOARD ==================== -->
+        <section id="screen-admin" class="hidden page-fade space-y-6">
+            <!-- Admin Top Bar -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-nodes text-indigo-600"></i> แดชบอร์ดวิเคราะห์ผลคะแนนสอบ
+                    </h2>
+                    <p class="text-slate-500 text-sm">ตรวจสอบคะแนน แยกแท็บห้องเรียน และดาวน์โหลดออกเป็นไฟล์ Excel ของท่านอย่างเป็นระเบียบ</p>
+                </div>
+                <!-- Action Tools -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="injectMockData()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3.5 py-2 rounded-lg text-xs transition flex items-center gap-1">
+                        <i class="fa-solid fa-flask"></i> จำลองคะแนนทดสอบ
+                    </button>
+                    <button onclick="clearAllScores()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3.5 py-2 rounded-lg text-xs transition flex items-center gap-1 border border-rose-200">
+                        <i class="fa-solid fa-trash-can"></i> ล้างข้อมูลผลสอบทั้งหมด
+                    </button>
+                    <button onclick="switchScreen('home')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-circle-arrow-left"></i> ออกจากระบบหลังบ้าน
+                    </button>
+                </div>
+            </div>
+
+            <!-- Global statistics summary widgets -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                    <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl"><i class="fa-solid fa-users text-2xl"></i></div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold uppercase block">นักเรียนเข้าสอบทั้งหมด</span>
+                        <span id="admin-stat-total" class="text-2xl font-bold text-slate-900">0 คน</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                    <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl"><i class="fa-solid fa-square-poll-vertical text-2xl"></i></div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold uppercase block">คะแนนเฉลี่ยสูงสุด</span>
+                        <span id="admin-stat-avg" class="text-2xl font-bold text-slate-900">0.0 คะแนน</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                    <div class="bg-teal-50 text-teal-600 p-3.5 rounded-xl"><i class="fa-solid fa-circle-check text-2xl"></i></div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold uppercase block">อัตราการสอบผ่าน</span>
+                        <span id="admin-stat-pass-rate" class="text-2xl font-bold text-slate-900">0%</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                    <div class="bg-yellow-50 text-yellow-600 p-3.5 rounded-xl"><i class="fa-solid fa-bolt-lightning text-2xl"></i></div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold uppercase block">คะแนนสูงสุด</span>
+                        <span id="admin-stat-max" class="text-2xl font-bold text-slate-900">0 คะแนน</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs by Classroom -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden">
+                <!-- Tab headers -->
+                <div class="bg-slate-50 border-b border-slate-200 px-4 pt-3 flex flex-col md:flex-row justify-between items-start md:items-end gap-3">
+                    <div class="flex gap-1">
+                        <button onclick="switchAdminRoom('ม.2/1')" id="tab-btn-m21" class="px-5 py-3 font-semibold text-sm rounded-t-xl transition-all border-b-2 border-transparent hover:text-indigo-600 text-slate-500">ม.2/1</button>
+                        <button onclick="switchAdminRoom('ม.2/2')" id="tab-btn-m22" class="px-5 py-3 font-semibold text-sm rounded-t-xl transition-all border-b-2 border-transparent hover:text-indigo-600 text-slate-500">ม.2/2</button>
+                        <button onclick="switchAdminRoom('ม.2/3')" id="tab-btn-m23" class="px-5 py-3 font-semibold text-sm rounded-t-xl transition-all border-b-2 border-transparent hover:text-indigo-600 text-slate-500">ม.2/3</button>
+                    </div>
+                    <!-- Export action -->
+                    <button id="btn-export-excel" onclick="exportToExcel()" class="mb-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-file-excel"></i> ส่งออกเป็น Excel (CSV)
+                    </button>
+                </div>
+
+                <!-- Classroom lists -->
+                <div class="p-6 overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 uppercase text-xs font-bold bg-slate-50/50">
+                                <th class="py-3.5 px-4 text-center">เลขที่</th>
+                                <th class="py-3.5 px-4 text-center">User ID</th>
+                                <th class="py-3.5 px-4">ชื่อ - นามสกุล</th>
+                                <th class="py-3.5 px-4 text-center">ตอนที่ 1 (5)</th>
+                                <th class="py-3.5 px-4 text-center">ตอนที่ 2 (5)</th>
+                                <th class="py-3.5 px-4 text-center">ตอนที่ 3 (5)</th>
+                                <th class="py-3.5 px-4 text-center">ตอนที่ 4 (5)</th>
+                                <th class="py-3.5 px-4 text-center">คะแนนรวม (20)</th>
+                                <th class="py-3.5 px-4 text-center">ผลการประเมิน</th>
+                                <th class="py-3.5 px-4 text-center">วันเวลาทำข้อสอบ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-rows" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+
+                    <!-- Table empty state -->
+                    <div id="admin-empty-state" class="hidden py-12 text-center space-y-3">
+                        <div class="text-slate-300"><i class="fa-solid fa-folder-open text-5xl"></i></div>
+                        <p class="text-slate-500 font-semibold">ยังไม่มีผู้สอบส่งคำตอบสำหรับห้องเรียนนี้</p>
+                        <p class="text-xs text-slate-400">กดปุ่ม "จำลองคะแนนทดสอบ" เพื่อสุ่มข้อมูลเพื่อการสาธิตรายงาน</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer block -->
+    <footer class="bg-slate-100 border-t border-slate-200 text-slate-500 py-6 text-center text-sm">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p>© 2026 ระบบประเมินผลออนไลน์ วิชาเทคโนโลยี (Arduino และอิเล็กทรอนิกส์เบื้องต้น) ม.2</p>
+            <p class="text-xs text-slate-400">พัฒนาและจัดระเบียบสำหรับคุณครูวิชาเทคโนโลยีโดยเฉพาะ</p>
+        </div>
+    </footer>
+
+    <!-- ==================== ADMIN PASSWORD MODAL ==================== -->
+    <div id="admin-auth-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden border border-slate-100 page-fade">
+            <div class="p-5 bg-gradient-to-r from-indigo-700 to-indigo-800 text-white flex justify-between items-center">
+                <h3 class="font-bold flex items-center gap-2"><i class="fa-solid fa-lock"></i> ป้อนรหัสผ่านหลังบ้าน</h3>
+                <button onclick="closeAdminModal()" class="text-white/60 hover:text-white transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-slate-500 text-xs">ระบุรหัสผ่านสำหรับการดูคะแนนรวมและส่งออก Excel (รหัสเริ่มต้นของระบบคือ <strong class="text-indigo-600">admin1234</strong>)</p>
+                <div>
+                    <input type="password" id="admin-passcode-input" placeholder="ป้อนรหัสผ่าน..." class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 transition outline-none text-center font-mono">
+                    <p id="admin-auth-error" class="hidden text-rose-500 text-xs mt-1.5 text-center font-semibold">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</p>
+                </div>
+                <button onclick="submitAdminAuth()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">
+                    เข้าสู่ระบบตรวจสอบ
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== LOGIC AND STATE MANAGEMENT JAVASCRIPT ==================== -->
+    <script>
+        // ------------------ EXAM DATABASE (20 Questions) ------------------
+        const EXAM_QUESTIONS = [
+            // PART 1: Digital & Analog
+            {
+                id: 1,
+                part: 1,
+                partTitle: "ตอนที่ 1 เรื่อง Digital และ Analog (5 คะแนน)",
+                qText: "1. ข้อมูลแบบ Digital มีลักษณะอย่างไร",
+                code: null,
+                options: [
+                    { key: "ก", text: "มีค่าต่อเนื่องทุกระดับ" },
+                    { key: "ข", text: "มีเพียงค่า 0 และ 1" },
+                    { key: "ค", text: "เป็นแรงดันไฟฟ้าสูงเสมอ" },
+                    { key: "ง", text: "ไม่มีค่าใดถูก" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 2,
+                part: 1,
+                partTitle: "ตอนที่ 1 เรื่อง Digital และ Analog (5 คะแนน)",
+                qText: "2. ข้อใดเป็นสัญญาณ Analog",
+                code: null,
+                options: [
+                    { key: "ก", text: "ปุ่มกด" },
+                    { key: "ข", text: "LED" },
+                    { key: "ค", text: "เซนเซอร์วัดอุณหภูมิ" },
+                    { key: "ง", text: "รีเลย์" }
+                ],
+                answer: "ค"
+            },
+            {
+                id: 3,
+                part: 1,
+                partTitle: "ตอนที่ 1 เรื่อง Digital และ Analog (5 คะแนน)",
+                qText: "3. ข้อใดเป็นอุปกรณ์ที่ให้ข้อมูลแบบ Digital",
+                code: null,
+                options: [
+                    { key: "ก", text: "ปุ่มกด (Push Button)" },
+                    { key: "ข", text: "โพเทนชิโอมิเตอร์" },
+                    { key: "ค", text: "LDR" },
+                    { key: "ง", text: "เซนเซอร์วัดอุณหภูมิ" }
+                ],
+                answer: "ก"
+            },
+            {
+                id: 4,
+                part: 1,
+                partTitle: "ตอนที่ 1 เรื่อง Digital และ Analog (5 คะแนน)",
+                qText: "4. ค่า Analog ของ Arduino มีช่วงเท่าใด",
+                code: null,
+                options: [
+                    { key: "ก", text: "0–1" },
+                    { key: "ข", text: "0–255" },
+                    { key: "ค", text: "0–1023" },
+                    { key: "ง", text: "0–500" }
+                ],
+                answer: "ค"
+            },
+            {
+                id: 5,
+                part: 1,
+                partTitle: "ตอนที่ 1 เรื่อง Digital และ Analog (5 คะแนน)",
+                qText: "5. ข้อใดกล่าวถูกต้อง",
+                code: null,
+                options: [
+                    { key: "ก", text: "Analog มีค่าได้หลายระดับ" },
+                    { key: "ข", text: "Digital มีค่าได้หลายระดับ" },
+                    { key: "ค", text: "Digital และ Analog เหมือนกัน" },
+                    { key: "ง", text: "ถูกทุกข้อ" }
+                ],
+                answer: "ก"
+            },
+            // PART 2: Input & Output
+            {
+                id: 6,
+                part: 2,
+                partTitle: "ตอนที่ 2 เรื่อง Input และ Output (5 คะแนน)",
+                qText: "6. Input คืออะไร",
+                code: null,
+                options: [
+                    { key: "ก", text: "อุปกรณ์แสดงผล" },
+                    { key: "ข", text: "อุปกรณ์รับข้อมูลเข้าสู่ระบบ" },
+                    { key: "ค", text: "อุปกรณ์จ่ายไฟ" },
+                    { key: "ง", text: "โปรแกรม" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 7,
+                part: 2,
+                partTitle: "ตอนที่ 2 เรื่อง Input และ Output (5 คะแนน)",
+                qText: "7. ข้อใดเป็นอุปกรณ์ Input",
+                code: null,
+                options: [
+                    { key: "ก", text: "LED" },
+                    { key: "ข", text: "Buzzer" },
+                    { key: "ค", text: "Push Button" },
+                    { key: "ง", text: "มอเตอร์" }
+                ],
+                answer: "ค"
+            },
+            {
+                id: 8,
+                part: 2,
+                partTitle: "ตอนที่ 2 เรื่อง Input และ Output (5 คะแนน)",
+                qText: "8. ข้อใดเป็นอุปกรณ์ Output",
+                code: null,
+                options: [
+                    { key: "ก", text: "ปุ่มกด" },
+                    { key: "ข", text: "เซนเซอร์แสง" },
+                    { key: "ค", text: "LED" },
+                    { key: "ง", text: "โพเทนชิโอมิเตอร์" }
+                ],
+                answer: "ค"
+            },
+            {
+                id: 9,
+                part: 2,
+                partTitle: "ตอนที่ 2 เรื่อง Input และ Output (5 คะแนน)",
+                qText: "9. เมื่อกดปุ่มแล้วไฟ LED ติด ปุ่มกดทำหน้าที่เป็นอะไร",
+                code: null,
+                options: [
+                    { key: "ก", text: "Output" },
+                    { key: "ข", text: "Input" },
+                    { key: "ค", text: "Power Supply" },
+                    { key: "ง", text: "Sensor" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 10,
+                part: 2,
+                partTitle: "ตอนที่ 2 เรื่อง Input และ Output (5 คะแนน)",
+                qText: "10. มอเตอร์จัดเป็นอุปกรณ์ประเภทใด",
+                code: null,
+                options: [
+                    { key: "ก", text: "Input" },
+                    { key: "ข", text: "Output" },
+                    { key: "ค", text: "Analog" },
+                    { key: "ง", text: "ไม่มีข้อถูก" }
+                ],
+                answer: "ข"
+            },
+            // PART 3: Arduino Code
+            {
+                id: 11,
+                part: 3,
+                partTitle: "ตอนที่ 3 เรื่องโค้ดพื้นฐาน Arduino (5 คะแนน)",
+                qText: "11. ฟังก์ชันใดทำงานเพียงครั้งเดียวเมื่อเปิดเครื่อง",
+                code: "void setup() {\n  // write code here\n}",
+                options: [
+                    { key: "ก", text: "loop()" },
+                    { key: "ข", text: "setup()" },
+                    { key: "ค", text: "begin()" },
+                    { key: "ง", text: "start()" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 12,
+                part: 3,
+                partTitle: "ตอนที่ 3 เรื่องโค้ดพื้นฐาน Arduino (5 คะแนน)",
+                qText: "12. ฟังก์ชัน loop() มีหน้าที่อะไร",
+                code: "void loop() {\n  // code runs repeatedly\n}",
+                options: [
+                    { key: "ก", text: "ทำงานเพียงครั้งเดียว" },
+                    { key: "ข", text: "ทำงานซ้ำไปเรื่อย ๆ" },
+                    { key: "ค", text: "ปิดโปรแกรม" },
+                    { key: "ง", text: "รีเซตบอร์ด" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 13,
+                part: 3,
+                partTitle: "ตอนที่ 3 เรื่องโค้ดพื้นฐาน Arduino (5 คะแนน)",
+                qText: "13. คำสั่งใดใช้กำหนดขาให้เป็น Output",
+                code: "______ (13, OUTPUT);",
+                options: [
+                    { key: "ก", text: "digitalWrite()" },
+                    { key: "ข", text: "pinMode()" },
+                    { key: "ค", text: "analogRead()" },
+                    { key: "ง", text: "delay()" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 14,
+                part: 3,
+                partTitle: "ตอนที่ 3 เรื่องโค้ดพื้นฐาน Arduino (5 คะแนน)",
+                qText: "14. คำสั่งใดใช้เปิดไฟ LED",
+                code: null,
+                options: [
+                    { key: "ก", text: "digitalWrite(13, HIGH);" },
+                    { key: "ข", text: "digitalWrite(13, LOW);" },
+                    { key: "ค", text: "pinMode(13, HIGH);" },
+                    { key: "ง", text: "analogRead(13);" }
+                ],
+                answer: "ก"
+            },
+            {
+                id: 15,
+                part: 3,
+                partTitle: "ตอนที่ 3 เรื่องโค้ดพื้นฐาน Arduino (5 คะแนน)",
+                qText: "15. คำสั่ง delay(1000); หมายถึงอะไร",
+                code: "delay(1000); // Wait time",
+                options: [
+                    { key: "ก", text: "หน่วงเวลา 1 วินาที" },
+                    { key: "ข", text: "หน่วงเวลา 100 วินาที" },
+                    { key: "ค", text: "หน่วงเวลา 10 วินาที" },
+                    { key: "ง", text: "หน่วงเวลา 0.1 วินาที" }
+                ],
+                answer: "ก"
+            },
+            // PART 4: AC & DC
+            {
+                id: 16,
+                part: 4,
+                partTitle: "ตอนที่ 4 เรื่องไฟฟ้า AC และ DC (5 คะแนน)",
+                qText: "16. ไฟฟ้า DC คืออะไร",
+                code: null,
+                options: [
+                    { key: "ก", text: "ไฟฟ้ากระแสสลับ" },
+                    { key: "ข", text: "ไฟฟ้ากระแสตรง" },
+                    { key: "ค", text: "ไฟฟ้าแรงสูง" },
+                    { key: "ง", text: "ไฟฟ้าแรงต่ำ" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 17,
+                part: 4,
+                partTitle: "ตอนที่ 4 เรื่องไฟฟ้า AC และ DC (5 คะแนน)",
+                qText: "17. แบตเตอรี่ให้ไฟฟ้าชนิดใด",
+                code: null,
+                options: [
+                    { key: "ก", text: "AC" },
+                    { key: "ข", text: "DC" },
+                    { key: "ค", text: "ทั้ง AC และ DC" },
+                    { key: "ง", text: "ไม่มีข้อถูก" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 18,
+                part: 4,
+                partTitle: "ตอนที่ 4 เรื่องไฟฟ้า AC และ DC (5 คะแนน)",
+                qText: "18. ไฟฟ้าตามบ้านทั่วไปเป็นไฟชนิดใด",
+                code: null,
+                options: [
+                    { key: "ก", text: "DC" },
+                    { key: "ข", text: "AC" },
+                    { key: "ค", text: "Digital" },
+                    { key: "ง", text: "Analog" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 19,
+                part: 4,
+                partTitle: "ตอนที่ 4 เรื่องไฟฟ้า AC และ DC (5 คะแนน)",
+                qText: "19. Arduino UNO ใช้ไฟฟ้าชนิดใดในการทำงาน",
+                code: null,
+                options: [
+                    { key: "ก", text: "AC" },
+                    { key: "ข", text: "DC" },
+                    { key: "ค", text: "AC และ DC พร้อมกัน" },
+                    { key: "ง", text: "ถูกทุกข้อ" }
+                ],
+                answer: "ข"
+            },
+            {
+                id: 20,
+                part: 4,
+                partTitle: "ตอนที่ 4 เรื่องไฟฟ้า AC และ DC (5 คะแนน)",
+                qText: "20. ข้อใดจับคู่ได้ถูกต้อง",
+                code: null,
+                options: [
+                    { key: "ก", text: "แบตเตอรี่ → AC" },
+                    { key: "ข", text: "ปลั๊กไฟบ้าน → DC" },
+                    { key: "ค", text: "แบตเตอรี่ → DC" },
+                    { key: "ง", text: "ไม่มีข้อถูก" }
+                ],
+                answer: "ค"
+            }
+        ];
+
+        // ------------------ GLOBAL APPLICATION STATE ------------------
+        let currentScreen = 'home';
+        let currentQuestionIndex = 0; // 0-19 corresponds to Questions 1-20
+        let userAnswers = {}; // { questionId: selectedKey }
+        let studentInfo = { room: '', uid: '', no: '', name: '' };
+        let examTimer = null;
+        let timeRemaining = 1800; // 30 mins in seconds
+        let activeAdminRoom = 'ม.2/1';
+
+        // Initialize App
+        window.onload = function() {
+            initLocalStorage();
+            switchScreen('home');
+        };
+
+        // Initialize storage if not exists
+        function initLocalStorage() {
+            if (!localStorage.getItem('studentScores')) {
+                localStorage.setItem('studentScores', JSON.stringify([]));
+            }
+        }
+
+        // Helper to change displays smoothly
+        function switchScreen(screenId) {
+            currentScreen = screenId;
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-admin').classList.add('hidden');
+
+            document.getElementById('screen-' + screenId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (screenId === 'home') {
+                // Clear active timer when returning home
+                clearInterval(examTimer);
+                document.getElementById('form-register').reset();
+            }
+        }
+
+        // ------------------ QUIZ INTAKE / START ------------------
+        function startQuiz(event) {
+            event.preventDefault();
+
+            // Populate Student Data
+            studentInfo.room = document.getElementById('reg-room').value;
+            studentInfo.uid = document.getElementById('reg-uid').value.trim().toUpperCase();
+            studentInfo.no = document.getElementById('reg-no').value;
+            studentInfo.name = document.getElementById('reg-name').value.trim();
+
+            if (!studentInfo.room || !studentInfo.uid || !studentInfo.no || !studentInfo.name) {
+                alert("กรุณากรอกข้อมูลให้ครบถ้วนก่อนเข้าห้องสอบ");
+                return;
+            }
+
+            // Reset Answers state
+            userAnswers = {};
+            currentQuestionIndex = 0;
+
+            // Update UI elements
+            document.getElementById('quiz-student-info').innerHTML = `<i class="fa-solid fa-user"></i> ห้อง ${studentInfo.room} เลขที่ ${studentInfo.no} | ${studentInfo.name}`;
+            document.getElementById('quiz-student-uid').textContent = studentInfo.uid;
+
+            // Start Timer (30 minutes)
+            timeRemaining = 1800; 
+            updateTimerDisplay();
+            clearInterval(examTimer);
+            examTimer = setInterval(function() {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 0) {
+                    clearInterval(examTimer);
+                    alert("หมดเวลาทำข้อสอบแล้ว! ระบบจะทำการตรวจคะแนนอัตโนมัติจากคำตอบที่บันทึกไว้");
+                    submitQuizAnswers(true); // force auto submit
+                }
+            }, 1000);
+
+            // Load first question and render
+            renderQuestion();
+            switchScreen('quiz');
+        }
+
+        function updateTimerDisplay() {
+            let minutes = Math.floor(timeRemaining / 60);
+            let seconds = timeRemaining % 60;
+            document.getElementById('quiz-timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // ------------------ EXAM INTERACTION LAYOUT ------------------
+        function renderQuestion() {
+            const q = EXAM_QUESTIONS[currentQuestionIndex];
+            
+            // Set Part and title
+            document.getElementById('quiz-part-name').textContent = q.partTitle;
+            document.getElementById('quiz-q-num').textContent = `คำถามข้อที่ ${q.id} จาก 20 ข้อ`;
+            document.getElementById('quiz-q-text').textContent = q.qText;
+
+            // Show/Hide code blocks
+            const codeBox = document.getElementById('quiz-code-box');
+            if (q.code) {
+                codeBox.classList.remove('hidden');
+                document.getElementById('quiz-code-content').textContent = q.code;
+            } else {
+                codeBox.classList.add('hidden');
+            }
+
+            // Options container
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            const selectedAnswer = userAnswers[q.id];
+
+            q.options.forEach(opt => {
+                const isSelected = selectedAnswer === opt.key;
+                const optionDiv = document.createElement('div');
+                optionDiv.onclick = () => selectOption(q.id, opt.key);
+                optionDiv.className = `p-4 rounded-xl border-2 transition-all duration-150 cursor-pointer flex items-center justify-between ${
+                    isSelected 
+                    ? 'border-indigo-600 bg-indigo-50/70 text-indigo-950 font-semibold' 
+                    : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50 text-slate-700'
+                }`;
+
+                optionDiv.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-bold ${
+                            isSelected ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-500 border-slate-300'
+                        }">
+                            ${opt.key}
+                        </span>
+                        <span>${opt.text}</span>
+                    </div>
+                    ${isSelected ? '<i class="fa-solid fa-circle-check text-indigo-600 text-lg"></i>' : ''}
+                `;
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            // Update pagination buttons
+            const prevBtn = document.getElementById('btn-prev-q');
+            const nextBtn = document.getElementById('btn-next-q');
+
+            // Prev button visibility/state
+            if (currentQuestionIndex === 0) {
+                prevBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+                prevBtn.disabled = false;
+            }
+
+            // Next button text
+            if (currentQuestionIndex === EXAM_QUESTIONS.length - 1) {
+                nextBtn.innerHTML = `ทบทวนผลสอบ <i class="fa-solid fa-circle-info"></i>`;
+            } else {
+                nextBtn.innerHTML = `ข้อถัดไป <i class="fa-solid fa-arrow-right"></i>`;
+            }
+
+            // Highlight side indicator layout mapping
+            updateQuestionMapHighlight();
+        }
+
+        function selectOption(qId, key) {
+            userAnswers[qId] = key;
+            
+            // Re-render choices to show selected choice immediately
+            renderQuestion();
+            
+            // Mark Map button as answered
+            const mapBtn = document.getElementById(`nav-btn-${qId}`);
+            mapBtn.className = "h-9 rounded-lg font-bold text-sm transition border flex items-center justify-center bg-indigo-600 border-indigo-600 text-white";
+        }
+
+        function jumpToQuestion(qNum) {
+            currentQuestionIndex = qNum - 1;
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < EXAM_QUESTIONS.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                // At the end, quick warning to review
+                alert("คุณทำมาถึงข้อสุดท้ายแล้ว กรุณาตรวจสอบแผนผังความสมบูรณ์และกดปุ่ม 'ส่งคำตอบตรวจผลสอบ' สีแดงเพื่อตรวจคะแนน");
+            }
+        }
+
+        function updateQuestionMapHighlight() {
+            for (let i = 1; i <= EXAM_QUESTIONS.length; i++) {
+                const btn = document.getElementById(`nav-btn-${i}`);
+                const isSelected = userAnswers[i] !== undefined;
+                const isActive = (i - 1) === currentQuestionIndex;
+
+                if (isActive) {
+                    btn.classList.add('ring-4', 'ring-indigo-300', 'scale-105');
+                } else {
+                    btn.classList.remove('ring-4', 'ring-indigo-300', 'scale-105');
+                }
+
+                // Normal state base colors depending on selection
+                if (isSelected) {
+                    btn.className = btn.className.replace(/bg-slate-100|border-slate-200|text-slate-700/g, 'bg-indigo-600 border-indigo-600 text-white font-bold');
+                } else {
+                    btn.className = btn.className.replace(/bg-indigo-600|border-indigo-600|text-white/g, 'bg-slate-100 border-slate-200 text-slate-700 font-semibold');
+                }
+            }
+        }
+
+        // ------------------ SUBMIT & GRADING SYSTEM ------------------
+        function confirmSubmitQuiz() {
+            const unansweredCount = EXAM_QUESTIONS.length - Object.keys(userAnswers).length;
+            let confirmationMsg = "ต้องการส่งคำตอบเพื่อประเมินผลสอบจริงหรือไม่?";
+            
+            if (unansweredCount > 0) {
+                confirmationMsg = `แจ้งเตือน: คุณยังไม่ได้ทำข้อสอบอีก ${unansweredCount} ข้อ! ต้องการส่งคำตอบเพื่อตรวจคะแนนจริงหรือไม่?`;
+            }
+
+            if (confirm(confirmationMsg)) {
+                submitQuizAnswers(false);
+            }
+        }
+
+        function submitQuizAnswers(isForced = false) {
+            clearInterval(examTimer);
+
+            let scoreParts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+            let totalScore = 0;
+
+            // Grade questions
+            EXAM_QUESTIONS.forEach(q => {
+                const userAns = userAnswers[q.id];
+                if (userAns === q.answer) {
+                    scoreParts[q.part]++;
+                    totalScore++;
+                }
+            });
+
+            // Save results to browser database
+            const scoreRecord = {
+                uid: studentInfo.uid,
+                room: studentInfo.room,
+                no: parseInt(studentInfo.no),
+                name: studentInfo.name,
+                part1: scoreParts[1],
+                part2: scoreParts[2],
+                part3: scoreParts[3],
+                part4: scoreParts[4],
+                total: totalScore,
+                submittedAt: new Date().toLocaleString('th-TH')
+            };
+
+            const localRecords = JSON.parse(localStorage.getItem('studentScores')) || [];
+            
+            // Check if record already exists for this UID and update or insert new
+            const existingIdx = localRecords.findIndex(r => r.uid === scoreRecord.uid);
+            if (existingIdx !== -1) {
+                localRecords[existingIdx] = scoreRecord; // replace with latest attempt
+            } else {
+                localRecords.push(scoreRecord);
+            }
+            
+            localStorage.setItem('studentScores', JSON.stringify(localRecords));
+
+            // Populate Score results view
+            document.getElementById('result-total-score').textContent = totalScore;
+            document.getElementById('result-user-summary').innerHTML = `
+                ผลการสอบของ <strong>ห้อง ${studentInfo.room} เลขที่ ${studentInfo.no} | ${studentInfo.name}</strong> 
+                (User ID: <span class="font-mono text-xs font-bold">${studentInfo.uid}</span>) ได้รับการบันทึกแล้ว
+            `;
+
+            // Display sectional details
+            document.getElementById('result-p1-score').textContent = `${scoreParts[1]} / 5`;
+            document.getElementById('result-p2-score').textContent = `${scoreParts[2]} / 5`;
+            document.getElementById('result-p3-score').textContent = `${scoreParts[3]} / 5`;
+            document.getElementById('result-p4-score').textContent = `${scoreParts[4]} / 5`;
+
+            // Set visual status ring
+            const ring = document.getElementById('score-ring-color');
+            const passBadge = document.getElementById('result-pass-badge');
+
+            if (totalScore >= 10) {
+                ring.className = "mx-auto w-36 h-36 md:w-44 md:h-44 rounded-full border-8 border-emerald-500 bg-emerald-50/30 flex flex-col items-center justify-center shadow-lg";
+                passBadge.className = "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold bg-emerald-100 text-emerald-800";
+                passBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> ผ่านเกณฑ์การประเมิน (ผ่าน)`;
+            } else {
+                ring.className = "mx-auto w-36 h-36 md:w-44 md:h-44 rounded-full border-8 border-rose-500 bg-rose-50/30 flex flex-col items-center justify-center shadow-lg";
+                passBadge.className = "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold bg-rose-100 text-rose-800";
+                passBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ไม่ผ่านเกณฑ์ขั้นต่ำ (ปรับปรุง)`;
+            }
+
+            switchScreen('result');
+        }
+
+        function backToHome() {
+            switchScreen('home');
+        }
+
+        // ------------------ SCORE LOOKUP COMPONENT ------------------
+        function lookupUserScore() {
+            const searchUid = document.getElementById('lookup-uid').value.trim().toUpperCase();
+            if (!searchUid) {
+                alert("กรุณากรอก User ID ที่ต้องการสืบค้น");
+                return;
+            }
+
+            const records = JSON.parse(localStorage.getItem('studentScores')) || [];
+            const result = records.find(r => r.uid === searchUid);
+            const box = document.getElementById('lookup-result-box');
+
+            if (result) {
+                box.classList.remove('hidden');
+                document.getElementById('lookup-name').textContent = result.name;
+                document.getElementById('lookup-room').textContent = result.room.replace('ม.2/', '');
+                document.getElementById('lookup-no').textContent = result.no;
+                document.getElementById('lookup-score').textContent = `${result.total} / 20`;
+                
+                const badge = document.getElementById('lookup-badge');
+                if (result.total >= 10) {
+                    badge.className = "px-2 py-0.5 rounded text-xs font-bold bg-emerald-500 text-slate-950";
+                    badge.textContent = "ผ่าน";
+                } else {
+                    badge.className = "px-2 py-0.5 rounded text-xs font-bold bg-rose-500 text-white";
+                    badge.textContent = "ปรับปรุง";
+                }
+            } else {
+                box.classList.add('hidden');
+                alert(`ไม่พบประวัติผลการสอบสำหรับ User ID: ${searchUid} ในระบบ`);
+            }
+        }
+
+        // ------------------ TEACHER ADMIN DASHBOARD ------------------
+        function openAdminModal() {
+            document.getElementById('admin-auth-modal').classList.remove('hidden');
+            document.getElementById('admin-passcode-input').focus();
+            document.getElementById('admin-auth-error').classList.add('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-auth-modal').classList.add('hidden');
+            document.getElementById('admin-passcode-input').value = '';
+        }
+
+        function submitAdminAuth() {
+            const pw = document.getElementById('admin-passcode-input').value;
+            if (pw === 'admin1234') {
+                closeAdminModal();
+                loadAdminDashboard();
+                switchScreen('admin');
+            } else {
+                document.getElementById('admin-auth-error').classList.remove('hidden');
+            }
+        }
+
+        function loadAdminDashboard() {
+            renderAdminStats();
+            switchAdminRoom(activeAdminRoom);
+        }
+
+        function renderAdminStats() {
+            const records = JSON.parse(localStorage.getItem('studentScores')) || [];
+            const totalStudents = records.length;
+
+            if (totalStudents === 0) {
+                document.getElementById('admin-stat-total').textContent = "0 คน";
+                document.getElementById('admin-stat-avg').textContent = "0.0 คะแนน";
+                document.getElementById('admin-stat-pass-rate').textContent = "0%";
+                document.getElementById('admin-stat-max').textContent = "0 คะแนน";
+                return;
+            }
+
+            const totalScoreSum = records.reduce((sum, r) => sum + r.total, 0);
+            const averageScore = (totalScoreSum / totalStudents).toFixed(1);
+            
+            const passedCount = records.filter(r => r.total >= 10).length;
+            const passRate = Math.round((passedCount / totalStudents) * 100);
+
+            const maxScore = Math.max(...records.map(r => r.total));
+
+            document.getElementById('admin-stat-total').textContent = `${totalStudents} คน`;
+            document.getElementById('admin-stat-avg').textContent = `${averageScore} คะแนน`;
+            document.getElementById('admin-stat-pass-rate').textContent = `${passRate}%`;
+            document.getElementById('admin-stat-max').textContent = `${maxScore} คะแนน`;
+        }
+
+        function switchAdminRoom(roomName) {
+            activeAdminRoom = roomName;
+
+            // Highlight active tab
+            ['ม.2/1', 'ม.2/2', 'ม.2/3'].forEach(r => {
+                const tabId = r === 'ม.2/1' ? 'm21' : r === 'ม.2/2' ? 'm22' : 'm23';
+                const tabBtn = document.getElementById(`tab-btn-${tabId}`);
+                if (r === roomName) {
+                    tabBtn.className = "px-5 py-3 font-bold text-sm rounded-t-xl transition-all border-b-2 border-indigo-600 text-indigo-600 bg-white shadow-sm";
+                } else {
+                    tabBtn.className = "px-5 py-3 font-semibold text-sm rounded-t-xl transition-all border-b-2 border-transparent hover:text-indigo-600 text-slate-500 hover:bg-slate-100/50";
+                }
+            });
+
+            // Populate table rows based on Class room
+            const records = JSON.parse(localStorage.getItem('studentScores')) || [];
+            const filtered = records.filter(r => r.room === roomName).sort((a, b) => a.no - b.no);
+
+            const tbody = document.getElementById('admin-table-rows');
+            const emptyState = document.getElementById('admin-empty-state');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(student => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-slate-50/50 transition-colors";
+
+                const statusColor = student.total >= 10 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200';
+                const statusText = student.total >= 10 ? 'ผ่าน' : 'ปรับปรุง';
+
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-center font-semibold text-slate-500">${student.no}</td>
+                    <td class="py-3 px-4 text-center font-mono text-xs font-bold text-slate-900 bg-slate-50 rounded-lg border border-slate-100">${student.uid}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-900">${student.name}</td>
+                    <td class="py-3 px-4 text-center text-slate-500 font-medium">${student.part1} / 5</td>
+                    <td class="py-3 px-4 text-center text-slate-500 font-medium">${student.part2} / 5</td>
+                    <td class="py-3 px-4 text-center text-slate-500 font-medium">${student.part3} / 5</td>
+                    <td class="py-3 px-4 text-center text-slate-500 font-medium">${student.part4} / 5</td>
+                    <td class="py-3 px-4 text-center font-extrabold text-indigo-700 text-base">${student.total} / 20</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="px-2.5 py-1 text-xs font-extrabold rounded-full border ${statusColor}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center text-xs text-slate-400 font-medium">${student.submittedAt}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ------------------ EXPORT DATA TO EXCEL (CSV) ------------------
+        function exportToExcel() {
+            const records = JSON.parse(localStorage.getItem('studentScores')) || [];
+            const filtered = records.filter(r => r.room === activeAdminRoom).sort((a, b) => a.no - b.no);
+
+            if (filtered.length === 0) {
+                alert(`ยังไม่มีข้อมูลผลการสอบของห้อง ${activeAdminRoom} สำหรับออกรายงาน Excel`);
+                return;
+            }
+
+            // Generate CSV content with UTF-8 BOM to display Thai correctly in Excel
+            let csvContent = "\ufeff";
+            
+            // CSV Header Row
+            csvContent += "เลขที่,User ID,ชื่อ-นามสกุล,ห้องเรียน,ตอนที่ 1 (Digital-Analog),ตอนที่ 2 (Input-Output),ตอนที่ 3 (Arduino Code),ตอนที่ 4 (AC-DC),คะแนนรวม (20 คะแนน),สถานะการประเมิน,วันเวลาทำข้อสอบ\n";
+
+            filtered.forEach(student => {
+                const statusText = student.total >= 10 ? "ผ่าน" : "ปรับปรุง";
+                csvContent += `${student.no},${student.uid},"${student.name}",${student.room},${student.part1},${student.part2},${student.part3},${student.part4},${student.total},${statusText},${student.submittedAt}\n`;
+            });
+
+            // Download Trigger
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+            const link = document.createElement("a");
+            
+            // Format filename based on selected Class Room name
+            const cleanRoomName = activeAdminRoom.replace("/", "_");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `คะแนนสอบ_เทคโนโลยี_${cleanRoomName}.csv`);
+            document.body.appendChild(link); // Required for FF
+
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Inject Mock Data (Allows teachers to preview report functionality instantly)
+        function injectMockData() {
+            const firstNames = ["กิตติภพ", "จิรพัฒน์", "ชยุตม์", "ธนพัตน์", "ปกรณ์เกียรติ", "รัชพล", "พีรพล", "ชลสิทธิ์", "ณัฐพงษ์", "มนัสวี", "วรัญญา", "ชลดา", "ทิพยวรรณ", "ขวัญจิรา", "กัญญารัตน์", "พิมพิกา"];
+            const lastNames = ["สมบูรณ์", "ดีเลิศ", "แสนดี", "วงศ์ษา", "รุ่งเรือง", "ชื่นชม", "มณีรนิต", "แสงทอง", "สุขใจ", "บุญธรรม", "แก้วงาม", "นามดี", "ยอดรัก", "ทรงเดช", "ศรีบุญ", "เกิดผล"];
+            const classesList = ["ม.2/1", "ม.2/2", "ม.2/3"];
+
+            let currentRecords = JSON.parse(localStorage.getItem('studentScores')) || [];
+
+            // Generate 15 fake users to populate nicely across rooms
+            for (let i = 0; i < 15; i++) {
+                const room = classesList[Math.floor(Math.random() * classesList.length)];
+                const roomCode = room.replace("/", "").replace(".", ""); // "21", "22", "23"
+                const no = Math.floor(Math.random() * 30) + 1;
+                const uid = `UID8${roomCode}${no.toString().padStart(2, '0')}`;
+                
+                // Avoid duplicating UIDs
+                if (currentRecords.some(r => r.uid === uid)) continue;
+
+                const namePrefix = Math.random() > 0.5 ? "เด็กชาย" : "เด็กหญิง";
+                const fullName = `${namePrefix}${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+                
+                // Randomize scores per section
+                const part1 = Math.floor(Math.random() * 3) + 3; // 3-5
+                const part2 = Math.floor(Math.random() * 3) + 3; // 3-5
+                const part3 = Math.floor(Math.random() * 4) + 2; // 2-5
+                const part4 = Math.floor(Math.random() * 3) + 3; // 3-5
+                const total = part1 + part2 + part3 + part4;
+
+                const submitTime = new Date(Date.now() - Math.random() * 36000000).toLocaleString('th-TH');
+
+                currentRecords.push({
+                    uid,
+                    room,
+                    no,
+                    name: fullName,
+                    part1, part2, part3, part4,
+                    total,
+                    submittedAt: submitTime
+                });
+            }
+
+            localStorage.setItem('studentScores', JSON.stringify(currentRecords));
+            loadAdminDashboard();
+            alert("สุ่มจำลองข้อมูลผู้เข้าสอบในแต่ละห้องเรียน เรียบร้อยแล้ว!");
+        }
+
+        function clearAllScores() {
+            if (confirm("คุณแน่ใจว่าต้องการล้างฐานข้อมูลผลสอบของนักเรียนทั้งหมด? (ข้อมูลนี้จะไม่สามารถกู้คืนได้)")) {
+                localStorage.setItem('studentScores', JSON.stringify([]));
+                loadAdminDashboard();
+                alert("ล้างฐานข้อมูลประวัติสอบทั้งหมดสำเร็จ");
+            }
+        }
+    </script>
+</body>
+</html>
